@@ -1,0 +1,17 @@
+div#content {
+    margin: auto;
+    text-align: center;
+}
+
+div.dice {
+    font-size: 40px;
+    padding: 15px;
+    border: 1px solid #555;
+    width: 90px;
+    margin: 10px auto;
+}
+
+button {
+    font-size: 30px;
+    padding: 30px 60px;
+}

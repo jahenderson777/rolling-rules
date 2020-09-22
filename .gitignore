@@ -1,0 +1,8 @@
+/shadow.iml
+/yarn.lock
+/public/js
+/node_modules
+/.shadow-cljs
+/.cpcache
+/.clj-kondo
+/.calva

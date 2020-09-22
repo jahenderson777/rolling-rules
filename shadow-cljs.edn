@@ -1,0 +1,8 @@
+{:deps true
+ :builds
+ {:app {:asset-path "/js"
+        :modules {:main {:init-fn rolling-rules.core/init}}
+        :output-dir "public/js"
+        :target :browser}}
+ :dev-http {8700 "public"}
+ :nrepl {:port 8777}}

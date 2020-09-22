@@ -63,29 +63,30 @@
                 :on-click #(! :firebase/phone-sign-in)}
         "SMS me a login code"]])
     [:hr]
-    (if (<- :show-login-account)
+    (if (<- :firebase/show-login-account)
       [:div
        [:p ;{:style (s :ma4)} 
         "Login with an account you have already created..."]
-       [login-input {:id "Email" :db-key :temp-email :type "email"}]
-       [login-input {:id "Password" :db-key :temp-password :type "password"}]
+       [login-input {:id "Email" :db-key :firebase/temp-email :type "email"}]
+       [login-input {:id "Password" :db-key :firebase/temp-password :type "password"}]
        [:div ;{:style (s :ma3)}
-        [button {:on-click #(! :sign-in-by-email)}
+        [button {:on-click #(! :firebase/email-sign-in)}
          "Login"]
         [:a {:style {:margin-left 3 :padding 10 :font-size 14 :text-decoration "underline" :cursor "pointer"} 
-             :on-click #(! :send-password-reset-email)} "forgot password?"]]
+             :on-click #(! :firebase/send-password-reset-email)} "forgot password?"]]
        [:div ;{:style (s :mt3)}
-        [:a {:style {:text-decoration "underline" :cursor "pointer"} :on-click #(! :set [:show-login-account] false)} "Create an account with your email address"]]]
+        [:a {:style {:text-decoration "underline" :cursor "pointer"} :on-click #(! :set [:firebase/show-login-account] false)}
+         "Create an account with your email address"]]]
       [:div
        [:p ;{:style (s :ma4)} 
         "Or create an account with your email address..."]
-      ;[login-input {:id "Name" :db-key :temp-name :type "text"}]
-       [login-input {:id "Email" :db-key :temp-email :type "email"}]
-       [login-input {:id "Password" :db-key :temp-password :type "password"}]
-       [login-input {:id "Confirm Password" :db-key :temp-password-confirm :type "password"}]
+      ;[login-input {:id "Name" :db-key :firebase/temp-name :type "text"}]
+       [login-input {:id "Email" :db-key :firebase/temp-email :type "email"}]
+       [login-input {:id "Password" :db-key :firebase/temp-password :type "password"}]
+       [login-input {:id "Confirm Password" :db-key :firebase/temp-password-confirm :type "password"}]
        [:div ;{:style (s :pt3)}
-        [button {:on-click #(! :create-by-email)}
+        [button {:on-click #(! :firebase/email-create-user)}
          "Create account"]]
        [:div ;{:style (s :mt3)}
-        [:a {:style {:text-decoration "underline" :cursor "pointer"} :on-click #(! :set [:show-login-account] true)} 
+        [:a {:style {:text-decoration "underline" :cursor "pointer"} :on-click #(! :set [:firebase/show-login-account] true)} 
          "Login with an existing account"]]])])

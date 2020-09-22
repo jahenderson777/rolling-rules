@@ -44,26 +44,44 @@
         (xf/dispatch [:set [:firebase/recaptcha-verifier] recaptcha])
         (println "here")))))
 
-(defn email-create-user [{:keys [email password]}]
+(defn email-create-user [_ [_ {:keys [email password]}]]
   (.. firebase auth (createUserWithEmailAndPassword email password)
       (then (fn [user-credential]
               (set-user (.-user user-credential))))
       (catch default-error-handler)))
 
-(defn email-sign-in [{:keys [email password]}]
+(xf/reg-fx :firebase/email-create-user email-create-user)
+(xf/reg-event-fx
+ :firebase/email-create-user
+ (fn [db _]
+   (let [{:firebase/keys [temp-email temp-password temp-password-confirm]} db]
+     {:firebase/email-create-user {:email temp-email :password temp-password}
+      :db (dissoc db :firebase/temp-email :firebase/temp-password :firebase/temp-password-confirm :firebase/temp-name)})))
+
+(defn email-sign-in [_ [_ {:keys [email password]}]]
   (.. firebase auth (signInWithEmailAndPassword email password)
       (then (fn [user-credential]
               (set-user (.-user user-credential))))
       (catch default-error-handler)))
 
-(defn sign-out []
+(xf/reg-fx :firebase/email-sign-in email-sign-in)
+(xf/reg-event-fx
+ :firebase/email-sign-in
+ (fn [db _]
+   (let [{:firebase/keys [temp-email temp-password]} db]
+     {:firebase/email-sign-in {:email temp-email :password temp-password}
+      :db (dissoc db :firebase/temp-email :firebase/temp-password :firebase/temp-password-confirm :firebase/temp-name)})))
+
+(defn sign-out [_ _]
   (.. firebase auth (signOut)
       (catch default-error-handler)))
 
+(xf/reg-fx :firebase/sign-out sign-out)
+(xf/reg-event-fx :firebase/sign-out (fn [_ _] {:firebase/sign-out true}))
+
 (defn phone-sign-in [{:firebase/keys [temp-phone recaptcha-verifier] :as db} _]
-  (println "phone-sign-in")
   (let [phone-number (str/replace-first temp-phone #"^[0]+" "+44")]
-    (when recaptcha-verifier
+    (if recaptcha-verifier
       (.. firebase auth
           (signInWithPhoneNumber phone-number recaptcha-verifier)
           (then (fn [confirmation]
@@ -86,3 +104,16 @@
 (xf/reg-fx :firebase/phone-confirm-code phone-confirm-code)
 (xf/reg-event-fx :firebase/phone-confirm-code (fn [_ _] {:firebase/phone-confirm-code true}))
 
+(defn send-password-reset-email [_ [_ {:keys [email on-complete]}]]
+  (.. firebase auth
+      (sendPasswordResetEmail email)
+      (then on-complete)
+      (catch default-error-handler)))
+
+(xf/reg-fx :firebase/send-password-reset-email send-password-reset-email)
+(xf/reg-event-fx
+ :firebase/send-password-reset-email
+ (fn [db _]
+   (let [{:firebase/keys [temp-email]} db]
+     {:firebase/send-password-reset-email {:email temp-email
+                                           :on-complete #(js/alert "Password reset email sent")}})))

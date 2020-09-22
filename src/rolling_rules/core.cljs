@@ -27,7 +27,9 @@
                      [:div.dice {:on-click #(xf/dispatch [:set])}
                       (:val dice)])
    [:button {:on-click #(xf/dispatch [:roll])}
-    "roll"]])
+    "roll"]
+   [:button {:on-click #(xf/dispatch [:firebase/sign-out])}
+    "log out"]])
 
 (defn main []
   [:div#content 

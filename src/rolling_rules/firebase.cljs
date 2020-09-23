@@ -41,8 +41,7 @@
                        "Phone"
                        (clj->js {:size "invisible"
                                  :callback #(xf/dispatch [:set [:firebase/captcha-msg] "Welcome Human"])}))]
-        (xf/dispatch [:set [:firebase/recaptcha-verifier] recaptcha])
-        (println "here")))))
+        (xf/dispatch [:set [:firebase/recaptcha-verifier] recaptcha])))))
 
 (defn email-create-user [_ [_ {:keys [email password]}]]
   (.. firebase auth (createUserWithEmailAndPassword email password)
@@ -117,3 +116,20 @@
    (let [{:firebase/keys [temp-email]} db]
      {:firebase/send-password-reset-email {:email temp-email
                                            :on-complete #(js/alert "Password reset email sent")}})))
+
+
+(comment
+  (.doc (.firestore firebase)
+        (str/join "/" (clj->js path)))
+
+  (.. firebase firestore
+      (doc (str/join "/" (clj->js path)))
+      (onSnapshot)))
+
+
+(defn collection-on-snapshot [path f]
+  (.. firebase firestore
+      (collection (str/join "/" path))
+      (onSnapshot (fn [querySnapshot]
+                    (f (for [doc (js->clj (.-docs querySnapshot))]
+                         (js->clj (.data doc))))))))

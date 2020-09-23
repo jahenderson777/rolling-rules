@@ -36,3 +36,7 @@ npx firebase projects:create rolling-rules
 yarn
 firebase init
 firebase deploy
+
+install gcloud cli https://cloud.google.com/sdk/docs/quickstart
+
+gcloud firestore databases create --region=europe-west2

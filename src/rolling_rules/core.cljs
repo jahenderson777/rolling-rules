@@ -21,13 +21,21 @@
 (defn <- [k]
   (<sub [:get k]))
 
+(defn rules []
+  (uix/with-effect []
+    (firebase/collection-on-snapshot ["rules"] #(xf/dispatch [:set [:rules] %])))
+  (util/for-idx i [rule (<sub [:get :rules])]
+                [:div.rule (pr-str rule)]))
+
 (defn logged-in []
   [:<> 
    (util/for-idx i [dice (<sub [:get :dice])]
                      [:div.dice {:on-click #(xf/dispatch [:set])}
                       (:val dice)])
+   
    [:button {:on-click #(xf/dispatch [:roll])}
     "roll"]
+   [rules]
    [:button {:on-click #(xf/dispatch [:firebase/sign-out])}
     "log out"]])
 

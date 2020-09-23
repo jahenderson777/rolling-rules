@@ -3,8 +3,6 @@
             [ajax.core :as ajax]
             ["firebase" :as firebase]))
 
-
-
 (xf/reg-fx :http-get
            (fn [_ [_ {:keys [url on-ok on-failed]}]]
              (ajax/GET url {:handler #(xf/dispatch [on-ok %])
